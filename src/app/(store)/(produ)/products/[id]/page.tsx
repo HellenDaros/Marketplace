@@ -5,6 +5,7 @@ import { Product } from "@/data/types/product";
 import {
   getProduct,
   getProducts,
+  getProductss,
 } from "@/app/(store)/(produ)/products/products.service";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ export default async function ProductPage({
   try {
     const idProduct = (await params).id;
     console.log(idProduct);
-    const product = await getProduct(idProduct);
+    const product = await getProductss(idProduct);
 
     console.log("Produto recebido:", product);
 
@@ -71,7 +72,7 @@ export default async function ProductPage({
       
     ); */}
           <div className="w-40 flex justify-end gap-4">
-            <Link href={`/products/${product.slug}/edit`}>
+            <Link href={`/products/${product.id}/edit`}>
               <Button>Editar</Button>
             </Link>
           </div>

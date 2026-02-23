@@ -13,14 +13,19 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className=" bg-zinc-100 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
         {/* Imagem */}
         <div className="relative h-56 overflow-hidden rounded-xl">
-          <Image
-            src={product.image}
-            alt={product.title}
-            fill
-            className="object-cover"
-          />
-
-          {/* Badges */}
+          {product.image ? (
+            <Image
+              src={product.image}
+              alt={product.title}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full bg-zinc-200 text-sm text-zinc-500">
+              Sem imagem
+            </div>
+          )}
+          ;{/* Badges */}
           <div className="absolute top-3 right-3 flex gap-2">
             <span className="bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
               ANUNCIADO
@@ -39,7 +44,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </h2>
 
             <span className="text-lg font-bold text-pink-400">
-              R$ {formatCurrency(product.price)}
+              R$ {product.price}
             </span>
           </div>
 

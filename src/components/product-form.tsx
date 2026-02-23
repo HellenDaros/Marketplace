@@ -26,11 +26,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { Upload } from "./upload";
 import {
+  getProductss,
   postProducts,
   updateProduct,
 } from "@/app/(store)/(produ)/products/products.service";
 import { fileToBase64 } from "@/utils/fileToBase64";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 interface ProductFormProps {
   productId?: string;
@@ -42,11 +44,34 @@ export function ProductForm({ productId }: ProductFormProps) {
     handleSubmit,
     getValues,
     control,
+    reset,
     formState: { errors },
   } = useForm<ProductSchemaType>({
     resolver: zodResolver(productSchema),
   });
   const router = useRouter();
+
+  useEffect(() => {
+    async function loadProduct() {
+      if (!productId) return;
+
+      try {
+        const data = await getProductss(productId);
+        reset({
+          title: data.title ?? "",
+          price: String(data.price ?? ""),
+          description: data.description ?? "",
+          categories: data.categories,
+          image: undefined,
+        });
+        console.log("Produto carregado:", data);
+      } catch (error) {
+        console.error("Erro ao carregar produto");
+      }
+    }
+
+    loadProduct();
+  }, [productId, reset]);
 
   async function onSubmit(formData: ProductSchemaType) {
     try {
@@ -168,7 +193,11 @@ export function ProductForm({ productId }: ProductFormProps) {
             </Field>
 
             <Field orientation="horizontal">
-              <Button type="button" variant="outline">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push("/")}
+              >
                 Cancelar
               </Button>
               <Button form="signin-form" type="submit">

@@ -9,19 +9,22 @@ import { AxiosError } from "axios";
 
 interface FilteredProducts {
   title?: string | undefined | null;
+  categories?: string | null;
 }
 
 // estamos dizendo que getProducts é uma função assíncrona que recebe um objeto do tipo FilteredProducts e retorna uma Promise que resolve para um array de Product.
 // O objeto FilteredProducts tem uma propriedade opcional title, que pode ser uma string, undefined ou null.
 // Se title for fornecido, a função irá filtrar os produtos com base no título. Se title não for fornecido, a função irá retornar todos os produtos.
 // Caso nenhum filtro seja fornecido, instanciamos que a função recebe um objeto vazio, ou seja, getProducts({}), para garantir que a função funcione corretamente mesmo sem filtros.
-export async function getProducts({ title }: FilteredProducts = {}): Promise<
-  Product[]
-> {
+export async function getProducts({
+  title,
+  categories,
+}: FilteredProducts = {}): Promise<Product[]> {
   try {
     const { data } = await api.get<Product[]>("/products", {
       params: {
         title: title,
+        ...(categories && { categories: categories }),
       },
     });
     console.log(data);
@@ -45,6 +48,18 @@ export async function getProduct(id: string): Promise<Product> {
     console.log(id);
     console.log(data);
     return data[0];
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error(error.response?.data);
+    }
+    throw new Error("Nenhum produto encontrado");
+  }
+}
+
+export async function getProductss(id: string): Promise<Product> {
+  try {
+    const { data } = await api.get<Product>(`/products/${id}`);
+    return data;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error(error.response?.data);
